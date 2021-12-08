@@ -4,60 +4,44 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.testappkotlin.DatabaseRoom.DataEntity
 import com.example.testappkotlin.DatabaseRoom.DataRoomDb
 import com.example.testappkotlin.Models.DataModel
 import com.example.testappkotlin.Models.DataObject
+import com.example.testappkotlin.Network.Repository
 import com.example.testappkotlin.Network.RetrofitInstance
 import com.example.testappkotlin.Network.RetrofitService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DataViewModel(app:Application): AndroidViewModel(app) {
-    var dataList = MutableLiveData<DataModel<List<DataObject>>>()
-    var dataListFromDb = MutableLiveData<List<DataEntity>>()
+class DataViewModel : ViewModel() {
+    var dataList = MutableLiveData<List<DataObject>>()
 
-    fun getDataFromApi(){
-        val retrofit = RetrofitInstance.getRetrofitInstance().create(RetrofitService::class.java)
-        retrofit.getData().enqueue(object :Callback<DataModel<List<DataObject>>>{
-            override fun onResponse(
-                call: Call<DataModel<List<DataObject>>>,
-                response: Response<DataModel<List<DataObject>>>
-            ) {
-               dataList.value = response.body()
-            }
+    val error =MutableLiveData<String>()
+    val repository = Repository()
+    fun getDataFromApi() {
+        repository.getDataInfo(error,dataList)
 
-            override fun onFailure(call: Call<DataModel<List<DataObject>>>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
+    }
 
-        })
+
+    fun getAllDb() {
+        CoroutineScope(Dispatchers.Main).launch {
+            dataList.value = withContext(Dispatchers.IO){
+                DataRoomDb.getRoomDatabase().dataDao().getAllDataInfo() }!!
+        }
     }
-    init{
-        dataListFromDb = MutableLiveData()
+
+    fun insertAllToDb(items: List<DataObject>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            DataRoomDb.getRoomDatabase().dataDao().insertData(items)
+
+        }
+
     }
-    fun getDataFromDbObservers():MutableLiveData<List<DataEntity>>{
-        return dataListFromDb
-    }
-    fun getAllDataFromDb(){
-        val dataDao = DataRoomDb.getAppDatabase((getApplication()))?.dataDao()
-        val list = dataDao?.getAllDataInfo()
-        dataListFromDb.postValue(list!!)
-    }
-    fun insertDataInfo(entity: DataEntity){
-        val dataDao = DataRoomDb.getAppDatabase((getApplication())).dataDao()
-        dataDao?.insertData(entity)
-        getAllDataFromDb()
-    }
-    fun deleteDataInfo(entity: DataEntity){
-        val dataDao = DataRoomDb.getAppDatabase((getApplication())).dataDao()
-        dataDao?.deleteData(entity)
-        getAllDataFromDb()
-    }
-    fun updateDataInfo(entity: DataEntity){
-        val dataDao = DataRoomDb.getAppDatabase((getApplication())).dataDao()
-        dataDao?.updateData(entity)
-        getAllDataFromDb()
-    }
+
 }

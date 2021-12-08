@@ -1,18 +1,20 @@
 package com.example.testappkotlin.DatabaseRoom
 
 import androidx.room.*
+import com.example.testappkotlin.Models.DataModel
+import com.example.testappkotlin.Models.DataObject
 
 @Dao
 interface DataDao {
-    @Query("SELECT *FROM appdata ORDER BY id DESC")
-    fun getAllDataInfo():List<DataEntity>?
+    @Query("SELECT *FROM datainfo")
+    fun getAllDataInfo(): List<DataObject>?
+    @Query("DELETE *FROM datainfo")
+    fun deleteAllDataInfo()
 
-    @Insert
-    fun insertData(data:DataEntity?)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertData(data:List<DataObject>)
 
-    @Delete
-    fun deleteData(data:DataEntity?)
-    @Update
-    fun updateData(data:DataEntity?)
+
+
 
 }
