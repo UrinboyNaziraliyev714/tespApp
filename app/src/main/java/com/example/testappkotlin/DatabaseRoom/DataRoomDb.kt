@@ -13,7 +13,7 @@ abstract class DataRoomDb : RoomDatabase(){
 
     companion object{
         private var INSTANCE:DataRoomDb? =null
-        fun initRoomDatabase(context: Context){
+        fun initRoomDatabase(context:Context) {
             if (INSTANCE==null){
                 INSTANCE = Room.databaseBuilder<DataRoomDb>(
                     context.applicationContext,DataRoomDb::class.java,"AppDb").build()
