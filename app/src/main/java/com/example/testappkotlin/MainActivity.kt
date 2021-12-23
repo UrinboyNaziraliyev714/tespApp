@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         dataViewModel.getDataFromApi()
         dataViewModel.dataList.observe(this, Observer{
             recyclerDataList.adapter = DataRecyclerAdapter(it)
+            insertDb()
         })
     }
 
