@@ -1,36 +1,34 @@
 package com.example.testappkotlin
 
 import android.os.Bundle
+import android.webkit.JavascriptInterface
+import android.webkit.WebChromeClient
+import android.webkit.WebView
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.testappkotlin.Models.DataObject
+import com.example.testappkotlin.Network.RetrofitInstance
 import com.example.testappkotlin.ViewModels.DataViewModel
 import kotlinx.android.synthetic.main.activity_info_data.*
 
 class InfoDataActivity : AppCompatActivity() {
-    private lateinit var dataViewModel: DataViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_info_data)
-        val item = intent.getStringExtra("image")
-        val name = intent.getStringExtra("name")
-        val startdate = intent.getStringExtra("startDate")
-        val endDate = intent.getStringExtra("endDate")
+        val wv :WebView = findViewById(R.id.webView)
 
-        Glide.with(this).load(item).into(imageinfo)
-
-        tv_info.text = "Name:    "+name+"\n"+"StardDate:  "+startdate+"\n"+"endDate:  "+endDate
-
-        //loadData()
-//        for (li in dataViewModel.dataList.value!!)
-//        {
-//
-//        }
+        wv.webChromeClient = WebChromeClient()
+        wv.settings.javaScriptEnabled = true
+        wv.loadUrl(RetrofitInstance.BASE_URl)
+        wv.addJavascriptInterface(JsObject(), "injectedObject")
 
     }
-    fun loadData() {
-        dataViewModel.getDataFromApi()
+    class JsObject {
+        @JavascriptInterface
+        override fun toString(): String {
+            return "Hi from injectedObject"
+        }
     }
 }

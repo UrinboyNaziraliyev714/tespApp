@@ -8,7 +8,7 @@ import com.example.testappkotlin.Models.DataObject
 interface DataDao {
     @Query("SELECT * FROM datainfo")
     fun getAllDataInfo(): List<DataObject>?
-    @Query("DELETE * FROM datainfo")
+    @Query(" DELETE from datainfo ")
     fun deleteAllDataInfo()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

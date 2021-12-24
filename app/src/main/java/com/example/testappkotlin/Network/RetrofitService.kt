@@ -7,6 +7,6 @@ import retrofit2.Call
 import retrofit2.http.GET
 
 interface RetrofitService {
-    @GET("/service/v2/upcomingGuides/")
+    @GET("api/character/")
     fun getData(): Observable<DataModel<List<DataObject>>>
 }

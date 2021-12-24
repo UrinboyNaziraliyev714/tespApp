@@ -20,7 +20,8 @@ class DataRecyclerAdapter(var mList :List<DataObject>): RecyclerView.Adapter<Dat
         val image:ImageView = itemView.findViewById(R.id.imageData)
         val name:TextView = itemView.findViewById(R.id.tv_name)
         val cardView:CardView = itemView.findViewById(R.id.cardItem)
-        val endDate:TextView = itemView.findViewById(R.id.tv_end_date)
+        val status:TextView = itemView.findViewById(R.id.tv_status)
+        val location:TextView = itemView.findViewById(R.id.tv_location)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHolderView {
@@ -30,16 +31,12 @@ class DataRecyclerAdapter(var mList :List<DataObject>): RecyclerView.Adapter<Dat
 
     override fun onBindViewHolder(holder: MyHolderView, position: Int) {
 
-        Glide.with(holder.itemView.context).asBitmap().load(mList[position].icon).into(holder.image)
+        Glide.with(holder.itemView.context).asBitmap().load(mList[position].image).into(holder.image)
        holder.name.text = mList[position].name
-       holder.endDate.text = mList[position].endDate
+       holder.status.text = mList[position].status
+       holder.location.text = mList[position].location[position].name
         holder.cardView.setOnClickListener {
             val intent = Intent(it.context, InfoDataActivity::class.java)
-            intent.putExtra("id",mList[position].uid)
-           intent.putExtra("image",mList[position].icon)
-           intent.putExtra("name",mList[position].name)
-            intent.putExtra("startDate",mList[position].startDate)
-            intent.putExtra("endDate",mList[position].endDate)
             it.context.startActivity(intent)
         }
     }

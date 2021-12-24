@@ -20,7 +20,7 @@ class Repository {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableObserver<DataModel<List<DataObject>>>(){
                     override fun onNext(t: DataModel<List<DataObject>>) {
-                            success.value = t.data
+                            success.value = t.results
                     }
                     override fun onError(e: Throwable) {
                         error.value = e.localizedMessage

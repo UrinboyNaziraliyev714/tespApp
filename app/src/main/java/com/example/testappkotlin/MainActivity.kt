@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.room.RoomDatabase
 import com.example.testappkotlin.Adapters.DataRecyclerAdapter
 import com.example.testappkotlin.DatabaseRoom.DataRoomDb
 import com.example.testappkotlin.Models.DataObject
@@ -19,8 +20,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        recyclerDataList.setHasFixedSize(true)
         recyclerDataList.layoutManager = LinearLayoutManager(this)
+
         initApi()
+      dataViewModel.dataList.observe(this, Observer {
+
+          recyclerDataList.adapter = DataRecyclerAdapter(it)
+      })
+
+
         loadData()
     }
 
@@ -30,24 +39,22 @@ class MainActivity : AppCompatActivity() {
         dataViewModel = ViewModelProvider(this)[DataViewModel::class.java]
         dataViewModel.getDataFromApi()
         dataViewModel.dataList.observe(this, Observer{
+           Toast.makeText(this,"${it}",Toast.LENGTH_LONG).show()
             recyclerDataList.adapter = DataRecyclerAdapter(it)
-            insertDb()
+           insertDb()
         })
     }
 
 
     fun loadData() {
-        dataViewModel.getDataFromApi()
+       //dataViewModel.getDataFromApi()
+        dataViewModel.getAllDb()
     }
 fun insertDb(){
-    var datainfoInsertData: List<DataObject> = ArrayList<DataObject>()
     dataViewModel.dataList.observe(this, Observer {
-        datainfoInsertData = dataViewModel.dataList.value!!
-        if (!datainfoInsertData.isEmpty()){
+
            getDataFromDb()
-        }else{
-            dataViewModel.insertAllToDb(it)
-        }
+
 
     })
 }
@@ -56,3 +63,6 @@ fun insertDb(){
     dataViewModel.getAllDb()
     }
 }
+
+
+

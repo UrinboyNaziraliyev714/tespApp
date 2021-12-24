@@ -17,26 +17,27 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class DataViewModel : ViewModel() {
-    var dataList = MutableLiveData<List<DataObject>>()
+    val dataList =MutableLiveData<List<DataObject>>()
 
     val error =MutableLiveData<String>()
     val repository = Repository()
     fun getDataFromApi() {
         repository.getDataInfo(error,dataList)
-
     }
-
 
     fun getAllDb() {
         CoroutineScope(Dispatchers.Main).launch {
             dataList.value = withContext(Dispatchers.IO){
+
                 DataRoomDb.getRoomDatabase().dataDao().getAllDataInfo() }!!
         }
     }
 
     fun insertAllToDb(items: List<DataObject>) {
         CoroutineScope(Dispatchers.IO).launch {
+            DataRoomDb.getRoomDatabase().dataDao().deleteAllDataInfo()
             DataRoomDb.getRoomDatabase().dataDao().insertData(items)
+
 
         }
 
